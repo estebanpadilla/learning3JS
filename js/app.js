@@ -21,53 +21,73 @@ function init() {
 	var duck = null;
 	var loader = new THREE.GLTFLoader();
 	var requestId;
-
-	window.addEventListener('keydown', arrowDown, false);
+	var ducks = [];
 
 	function update() {
 		stats.begin();
 		requestId = requestAnimationFrame(update);
 		//Add here your game code that needs to be update every frame.
-		animateCube();
+		//animateCube();
 
 		if (camera != null) {
 			renderer.render(scene, camera);
+
+			ducks.forEach(duck => {
+				duck.update();
+			});
 		}
+
+
 
 		stats.end();
 	}
 
 	setup();
-	//addCube();
+	addCube();
 	loadDuck();
 	update();
 
 	function setup() {
 		scene = new THREE.Scene();
+		scene.background = new THREE.Color(0xf0f0f0);
+		//scene = 0xffff00;
 
 		camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-		camera.position.z = 0;
-		camera.position.y = 5;
-		camera.rotation.x = degressToRadians(-90);
 
 		renderer = new THREE.WebGLRenderer();
 		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.shadowMap.enabled = true;
+		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 		document.body.appendChild(renderer.domElement);
 
 		const color = 0xffffff;
-		const intensity = 1;
+		const intensity = 0.25;
 		const light = new THREE.DirectionalLight(color, intensity);
-		light.position.set(0, 0, 10);
+		light.position.set(10, 10, 10);
+		light.castShadow = true;
+		light.shadow.mapSize.width = 512;  // default
+		light.shadow.mapSize.height = 512; // default
+		light.shadow.camera.near = 0.5;    // default
+		light.shadow.camera.far = 1000;
 		scene.add(light);
 
+		const ambientLight = new THREE.AmbientLight(color, 0.75);
+		scene.add(ambientLight);
+
 		let grid = new Grid(scene, 100);
+		let cameraControls = new CameraControls(camera, renderer.domElement);
 	}
 
 	function addCube() {
 		var geometry = new THREE.BoxGeometry(1, 1, 1);
 		var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
 		cube = new THREE.Mesh(geometry, material);
+		cube.castShadow = true;
+		cube.position.z = 3;
+		cube.position.y = 2;
 		scene.add(cube);
+
+		//console.log(cube);
 
 		// camera.position.x = 5;
 		//camera.rotation.y = Math.PI * 4;
@@ -94,60 +114,14 @@ function init() {
 	loader.setDRACOLoader(dracoLoader);
 
 	function loadDuck() {
-		// Load a glTF resource
-		loader.load(
-			// resource URL
-			'3dModels/Duck.gltf',
-			// called when the resource is loaded
-			function (gltf) {
-				duck = gltf.scenes[0];
-
-				scene.add(duck);
-
-				gltf.animations; // Array<THREE.AnimationClip>
-				gltf.scene; // THREE.Scene
-				gltf.scenes; // Array<THREE.Scene>
-				gltf.cameras; // Array<THREE.Camera>
-				gltf.asset; // Object
-				console.log(gltf);
-
-			},
-			// called while loading is progressing
-			function (xhr) {
-
-				console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-
-			},
-			// called when loading has errors
-			function (error) {
-
-				console.log('An error happened');
-
-			}
-		);
+		for (let i = 0; i < 10; i++) {
+			let dis = i * 5;
+			let duck = new Duck(scene, new THREE.Vector3(Math.random() * dis, Math.random() * dis, Math.random() * dis));
+			ducks.push(duck);
+		}
 	}
 
 	function degressToRadians(degress) {
 		return degress * (Math.PI / 180);
 	}
-
-	function arrowDown(e) {
-		switch (e.keyCode) {
-			case 37:
-				camera.position.x -= 1;
-				break;
-			case 38:
-				camera.position.z += 1;
-				break;
-			case 39:
-				camera.position.x += 1;
-				break;
-			case 40:
-				camera.position.z -= 1;
-				break;
-			default:
-				break;
-		}
-	}
-
 }
