@@ -31,17 +31,19 @@ class Grid {
         var axesHelper = new THREE.AxesHelper(5);
         scene.add(axesHelper);
 
-        var planeGeometry = new THREE.PlaneBufferGeometry(1000, 1000);
-        planeGeometry.rotateX(-Math.PI / 2);
-        var planeMaterial = new THREE.ShadowMaterial({ opacity: 0.2 });
 
-        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        plane.position.y = 0;
-        plane.position.x = 0;
-        plane.position.z = 0;
+        // ground
+        var groundMesh = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry(100, 100),
+            new THREE.MeshPhongMaterial({
+                color: 0x999999,
+                depthWrite: false
+            })
+        );
 
-        plane.receiveShadow = true;
-        scene.add(plane);
+        groundMesh.rotation.x = - Math.PI / 2;
+        groundMesh.receiveShadow = true;
+        scene.add(groundMesh);
 
 
         var helper = new THREE.GridHelper(size, size);
@@ -49,5 +51,9 @@ class Grid {
         helper.material.opacity = 0.25;
         helper.material.transparent = true;
         scene.add(helper);
+    }
+
+    degressToRadians(degress) {
+        return degress * (Math.PI / 180);
     }
 }

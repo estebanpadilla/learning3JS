@@ -10,7 +10,7 @@ class CameraControls {
         this.controls = new THREE.OrbitControls(camera, center);
 
         this.addButtons();
-        this.onZBtn(null);
+        this.onYBtn(null);
     }
 
     moveCamera(keyCode) {
