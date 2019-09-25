@@ -81,8 +81,8 @@ function init() {
 
 		dirLight.castShadow = true;
 
-		dirLight.shadow.mapSize.width = 2048;
-		dirLight.shadow.mapSize.height = 2048;
+		dirLight.shadow.mapSize.width = 4096;
+		dirLight.shadow.mapSize.height = 4096;
 
 		var d = 50;
 

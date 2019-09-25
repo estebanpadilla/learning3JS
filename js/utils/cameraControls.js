@@ -156,8 +156,6 @@ class CameraControls {
         leftBtn.addEventListener('click', this.onLeftBtn.bind(this), false);
 
         enableCheck.addEventListener('change', this.onEnableCheck.bind(this), false);
-
-
     }
 
     onXBtn(e) {
